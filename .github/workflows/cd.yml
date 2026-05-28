@@ -1,0 +1,44 @@
+name: cd
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: "1.26.0"
+            - name: Install goose
+              run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
+            - name: Build
+              run: ./scripts/buildprod.sh
+
+            - id: "auth"
+              uses: "google-github-actions/auth@v2"
+              with:
+                  credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+            - name: "Set up Cloud SDK"
+              uses: "google-github-actions/setup-gcloud@v3"
+
+            - name: "Use gcloud CLI"
+              run: "gcloud info"
+
+            - name: "Build and Push Docker Image"
+              run: gcloud builds submit --tag europe-west9-docker.pkg.dev/captcha_sweeper-494811/captcha_sweeper-ar-repo/captcha_sweeper:v1 .
+
+            - name: Migrate
+              run: ./scripts/migrateup.sh
+
+            - name: Deploy to Cloud Run
+              run: gcloud run deploy captcha_sweeper --image europe-west9-docker.pkg.dev/captcha_sweeper-494811/captcha_sweeper-ar-repo/captcha_sweeper:v1 --region europe-west9 --allow-unauthenticated --project captcha_sweeper-494811 --max-instances=4
