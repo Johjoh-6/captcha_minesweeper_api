@@ -53,6 +53,7 @@ jobs:
             - name: Build and Push Docker Image
               run: |
                   gcloud builds submit \
+                    --suppress-logs \
                     --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
 
             - name: Run migrations
