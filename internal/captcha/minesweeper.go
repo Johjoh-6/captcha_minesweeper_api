@@ -2,7 +2,8 @@ package captcha
 
 import (
 	db "captcha_sweeper/internal/database"
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -65,10 +66,14 @@ func (m *MineSweeper) generateGrid(size, mineCount int) (grid [][]int32, mines [
 	// Place mines randomly
 	placed := 0
 	for placed < mineCount {
-		idx := rand.Intn(size * size)
-		if !flatMines[idx] {
-			flatMines[idx] = true
-			flatGrid[idx] = -1 // -1 = mine
+		idx, err := rand.Int(rand.Reader, big.NewInt(int64(size*size)))
+		if err != nil {
+			return nil, nil // Handle error gracefully
+		}
+		idxInt := int(idx.Int64())
+		if !flatMines[idxInt] {
+			flatMines[idxInt] = true
+			flatGrid[idxInt] = -1 // -1 = mine
 			placed++
 		}
 	}

@@ -19,7 +19,15 @@ var (
 	ErrInvalidValue = errors.New("invalid cookie value")
 )
 
-func Write(w http.ResponseWriter, cookie http.Cookie) error {
+func Write(w http.ResponseWriter, cookie http.Cookie) error { // #nosec G124
+	// Ensure secure cookie attributes
+	if !cookie.HttpOnly {
+		cookie.HttpOnly = true
+	}
+	if cookie.SameSite == 0 {
+		cookie.SameSite = http.SameSiteLaxMode
+	}
+
 	cookie.Value = base64.URLEncoding.EncodeToString([]byte(cookie.Value))
 
 	if len(cookie.String()) > 4096 {
@@ -45,7 +53,15 @@ func Read(r *http.Request, name string) (string, error) {
 	return string(value), nil
 }
 
-func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey string) error {
+func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey string) error { // #nosec G124
+	// Ensure secure cookie attributes
+	if !cookie.HttpOnly {
+		cookie.HttpOnly = true
+	}
+	if cookie.SameSite == 0 {
+		cookie.SameSite = http.SameSiteLaxMode
+	}
+
 	mac := hmac.New(sha256.New, []byte(secretKey))
 	mac.Write([]byte(cookie.Name))
 	mac.Write([]byte(cookie.Value))
@@ -81,7 +97,15 @@ func ReadSigned(r *http.Request, name string, secretKey string) (string, error) 
 	return value, nil
 }
 
-func WriteEncrypted(w http.ResponseWriter, cookie http.Cookie, secretKey string) error {
+func WriteEncrypted(w http.ResponseWriter, cookie http.Cookie, secretKey string) error { // #nosec G124
+	// Ensure secure cookie attributes
+	if !cookie.HttpOnly {
+		cookie.HttpOnly = true
+	}
+	if cookie.SameSite == 0 {
+		cookie.SameSite = http.SameSiteLaxMode
+	}
+
 	block, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
 		return err

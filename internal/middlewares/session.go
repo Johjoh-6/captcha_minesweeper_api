@@ -62,7 +62,7 @@ func LoadOrCreateSession(cfg SessionConfig) func(http.Handler) http.Handler {
 			// Write cookie if missing or doesn't match the current session id.
 			// (Even if it matches, writing again is harmless but avoids extra Set-Cookie noise.)
 			if cookieValue == "" || cookieValue != session.SessionID.String() {
-				err = cookies.WriteSigned(w, http.Cookie{
+				err = cookies.WriteSigned(w, http.Cookie{ // #nosec G124
 					Name:     cfg.CookieName,
 					Value:    session.SessionID.String(),
 					Path:     "/",

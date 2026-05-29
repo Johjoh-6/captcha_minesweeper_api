@@ -96,13 +96,13 @@ func run(logger *slog.Logger) error {
 			return map[string]any{"error": err.Error()}
 		}
 		return map[string]any{
-			"captchas_total":        m.CaptchasTotal,
-			"captchas_solved":       m.CaptchasSolved,
-			"captchas_unsolved":     m.CaptchasUnsolved,
-			"captchas_last_hour":    m.CaptchasLastHour,
-			"sessions_total":        m.SessionsTotal,
-			"sessions_bots":         m.SessionsBots,
-			"sessions_non_bots":     m.SessionsNonBots,
+			"captchas_total":     m.CaptchasTotal,
+			"captchas_solved":    m.CaptchasSolved,
+			"captchas_unsolved":  m.CaptchasUnsolved,
+			"captchas_last_hour": m.CaptchasLastHour,
+			"sessions_total":     m.SessionsTotal,
+			"sessions_bots":      m.SessionsBots,
+			"sessions_non_bots":  m.SessionsNonBots,
 		}
 	}))
 

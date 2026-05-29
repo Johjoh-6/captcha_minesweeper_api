@@ -1,0 +1,70 @@
+name: cd
+
+on:
+    push:
+        branches: [main]
+
+env:
+    PROJECT_ID: captcha-sweeper-prod
+    REGION: europe-west9
+    REPOSITORY: captcha-sweeper
+    SERVICE: captcha-sweeper
+
+jobs:
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            id-token: write
+
+        env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version-file: "go.mod"
+
+            - name: Install goose
+              run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
+            - name: Build Go binary
+              run: ./scripts/buildprod.sh
+
+            - name: Authenticate to Google Cloud
+              uses: google-github-actions/auth@v3
+              with:
+                  workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+                  service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+            - name: Setup gcloud
+              uses: google-github-actions/setup-gcloud@v3
+
+            - name: Configure Docker auth
+              run: |
+                  gcloud auth configure-docker $REGION-docker.pkg.dev
+
+            - name: Build Docker image
+              run: |
+                  docker build \
+                    -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} .
+
+            - name: "Build and Push Docker Image"
+              run: gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
+
+            - name: Run migrations
+              run: ./scripts/migrateup.sh
+
+            - name: Deploy to Cloud Run
+              run: |
+                  gcloud run deploy $SERVICE \
+                    --image=$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} \
+                    --region=$REGION \
+                    --allow-unauthenticated \
+                    --max-instances=4

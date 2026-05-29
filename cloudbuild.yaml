@@ -1,0 +1,19 @@
+steps:
+    - name: "gcr.io/cloud-builders/docker"
+      args:
+          [
+              "build",
+              "-t",
+              "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest",
+              ".",
+          ]
+
+    - name: "gcr.io/cloud-builders/docker"
+      args:
+          [
+              "push",
+              "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest",
+          ]
+
+images:
+    - "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest"
