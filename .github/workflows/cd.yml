@@ -5,7 +5,7 @@ on:
         branches: [main]
 
 env:
-    PROJECT_ID: captcha-sweeper-prod
+    PROJECT_ID: captcha-minesweeper
     REGION: europe-west9
     REPOSITORY: captcha-sweeper
     SERVICE: captcha-sweeper
