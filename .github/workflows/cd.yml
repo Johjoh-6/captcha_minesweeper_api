@@ -30,6 +30,13 @@ jobs:
               uses: actions/setup-go@v5
               with:
                   go-version-file: "go.mod"
+            - name: Debug secrets presence
+              run: |
+                  echo "Provider length: ${#GCP_WIP}"
+                  echo "SA length: ${#GCP_SA}"
+              env:
+                  GCP_WIP: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+                  GCP_SA: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
             - name: Install goose
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -49,11 +56,6 @@ jobs:
             - name: Configure Docker auth
               run: |
                   gcloud auth configure-docker $REGION-docker.pkg.dev
-
-            - name: Build Docker image
-              run: |
-                  docker build \
-                    -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} .
 
             - name: "Build and Push Docker Image"
               run: gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
