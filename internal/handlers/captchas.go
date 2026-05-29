@@ -156,5 +156,4 @@ func (h *CaptchasHandlers) PlayCaptcha(w http.ResponseWriter, r *http.Request) {
 		status = http.StatusAccepted
 	}
 	h.respondCaptcha(w, r, updatedCaptcha, status)
-	return
 }

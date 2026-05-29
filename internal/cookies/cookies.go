@@ -21,7 +21,7 @@ var (
 
 func Write(w http.ResponseWriter, cookie http.Cookie) error { // #nosec G124
 	// Ensure secure cookie attributes
-	if cookie.HttpOnly == false {
+	if !cookie.HttpOnly {
 		cookie.HttpOnly = true
 	}
 	if cookie.SameSite == 0 {
@@ -55,7 +55,7 @@ func Read(r *http.Request, name string) (string, error) {
 
 func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey string) error { // #nosec G124
 	// Ensure secure cookie attributes
-	if cookie.HttpOnly == false {
+	if !cookie.HttpOnly {
 		cookie.HttpOnly = true
 	}
 	if cookie.SameSite == 0 {
@@ -99,7 +99,7 @@ func ReadSigned(r *http.Request, name string, secretKey string) (string, error) 
 
 func WriteEncrypted(w http.ResponseWriter, cookie http.Cookie, secretKey string) error { // #nosec G124
 	// Ensure secure cookie attributes
-	if cookie.HttpOnly == false {
+	if !cookie.HttpOnly {
 		cookie.HttpOnly = true
 	}
 	if cookie.SameSite == 0 {
