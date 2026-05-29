@@ -35,7 +35,7 @@ jobs:
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
             - name: Build Go binary
-              run: ./scripts/buildprod.sh
+              run: bash ./scripts/buildprod.sh
 
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v3
@@ -59,7 +59,7 @@ jobs:
               run: gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
 
             - name: Run migrations
-              run: ./scripts/migrateup.sh
+              run: bash ./scripts/migrateup.sh
 
             - name: Deploy to Cloud Run
               run: |
