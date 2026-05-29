@@ -1,22 +1,19 @@
 steps:
-    # Build l'image
     - name: "gcr.io/cloud-builders/docker"
       args:
           [
               "build",
               "-t",
-              "europe-west9-docker.pkg.dev/minesweeper-497713/captcha-sweeper-ar/captcha-sweeper:$COMMIT_SHA",
+              "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest",
               ".",
           ]
 
-    # Push l'image
     - name: "gcr.io/cloud-builders/docker"
       args:
           [
               "push",
-              "europe-west9-docker.pkg.dev/minesweeper-497713/captcha-sweeper-ar/captcha-sweeper:$COMMIT_SHA",
+              "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest",
           ]
 
-# Remplace $COMMIT_SHA par un tag fixe si tu préfères (ex: "1.0.0")
 images:
-    - "europe-west9-docker.pkg.dev/minesweeper-497713/captcha-sweeper-ar/captcha-sweeper:$COMMIT_SHA"
+    - "europe-west9-docker.pkg.dev/captcha-minesweeper/captcha-sweeper/captcha-sweeper:latest"

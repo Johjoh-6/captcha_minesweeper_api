@@ -4,41 +4,67 @@ on:
     push:
         branches: [main]
 
+env:
+    PROJECT_ID: captcha-sweeper-prod
+    REGION: europe-west9
+    REPOSITORY: captcha-sweeper
+    SERVICE: captcha-sweeper
+
 jobs:
     deploy:
         name: Deploy
         runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            id-token: write
+
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
         steps:
-            - name: Check out code
+            - name: Checkout code
               uses: actions/checkout@v4
+
             - name: Set up Go
               uses: actions/setup-go@v5
               with:
                   go-version: "1.26.0"
+
             - name: Install goose
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
-            - name: Build
+            - name: Build Go binary
               run: ./scripts/buildprod.sh
 
-            - id: "auth"
-              uses: "google-github-actions/auth@v2"
+            - name: Authenticate to Google Cloud
+              uses: google-github-actions/auth@v3
               with:
-                  credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+                  workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+                  service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-            - name: "Set up Cloud SDK"
-              uses: "google-github-actions/setup-gcloud@v3"
+            - name: Setup gcloud
+              uses: google-github-actions/setup-gcloud@v3
 
-            - name: "Use gcloud CLI"
-              run: "gcloud info"
+            - name: Configure Docker auth
+              run: |
+                  gcloud auth configure-docker $REGION-docker.pkg.dev
+
+            - name: Build Docker image
+              run: |
+                  docker build \
+                    -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} .
 
             - name: "Build and Push Docker Image"
-              run: gcloud builds submit --tag europe-west9-docker.pkg.dev/captcha_sweeper-494811/captcha_sweeper-ar-repo/captcha_sweeper:v1 .
+              run: gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
 
-            - name: Migrate
+            - name: Run migrations
               run: ./scripts/migrateup.sh
 
             - name: Deploy to Cloud Run
-              run: gcloud run deploy captcha_sweeper --image europe-west9-docker.pkg.dev/captcha_sweeper-494811/captcha_sweeper-ar-repo/captcha_sweeper:v1 --region europe-west9 --allow-unauthenticated --project captcha_sweeper-494811 --max-instances=4
+              run: |
+                  gcloud run deploy $SERVICE \
+                    --image=$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} \
+                    --region=$REGION \
+                    --allow-unauthenticated \
+                    --max-instances=4
