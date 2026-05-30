@@ -50,10 +50,14 @@ jobs:
               run: |
                   gcloud auth configure-docker $REGION-docker.pkg.dev
 
-            - name: Build and Push Docker Image
+            - name: Build Docker image
               run: |
-                  gcloud builds submit \
-                    --tag $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
+                  docker build \
+                    -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }} .
+
+            - name: Push Docker image
+              run: |
+                  docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$SERVICE:${{ github.sha }}
 
             - name: Run migrations
               run: bash ./scripts/migrateup.sh
