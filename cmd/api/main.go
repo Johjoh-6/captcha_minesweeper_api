@@ -33,7 +33,9 @@ func main() {
 func run(logger *slog.Logger) error {
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		// but do not fail if it is missing
+		log.Printf("Note: No .env file loaded (%v). Relying on system environment variables.", err)
+
 	}
 
 	showVersion := flag.Bool("version", false, "display version and exit")
