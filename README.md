@@ -1,12 +1,14 @@
-![TEST](https://github.com/Johjoh-6/captcha_sweeper/actions/workflows/ci.yml/badge.svg)
-![DEPLOY](https://github.com/Johjoh-6/captcha_sweeper/actions/workflows/cd.yml/badge.svg)
+![TEST](https://github.com/Johjoh-6/captcha_minesweeper_api/actions/workflows/ci.yml/badge.svg)
+![DEPLOY](https://github.com/Johjoh-6/captcha_minesweeper_api/actions/workflows/cd.yml/badge.svg)
 
 # Captcha Sweeper
 
 **A backend API for the Captcha Sweeper App**, built with Go, PostgreSQL, and modern tooling (sqlc, pgx, Goose).
 
 It's a simple API that allows you based on session to get a captcha game. The game is Minesweeper with different difficulty levels.
-> A Plugin will be available soon to integrate with your frontend.
+
+The SDK is available for the frontend to integrate with the API.
+[SDK](https://github.com/Johjoh-6/captcha-minesweeper-sdk)
 
 If the session captcha is set as `bot`, the API will increase the difficulty level automatically. It will increase the difficulty level by 1 every time the bot makes a request with never a chance of being detected as a human.
 
@@ -24,6 +26,8 @@ make run
 ```
 
 ## API Documentation
+
+> Add the version in the front of the endpoint, currently `v1`.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
