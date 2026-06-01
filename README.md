@@ -13,6 +13,10 @@ The SDK is available for the frontend to integrate with the API.
 If the session captcha is set as `bot`, the API will increase the difficulty level automatically. It will increase the difficulty level by 1 every time the bot makes a request with never a chance of being detected as a human.
 > This is for the future updates
 
+# Motivation
+
+I wanted a home solution for a captcha that could be integrated into any web application. Since most of the traditional captcha use images recognition, I wanted to use a different approach. The idea to use minesweeper as a captcha game come from the popular game Minesweeper (i use to play a lot during my childhood). But I wanted to build a backend API for it, so I could integrate it into any web application. There is also a frontend SDK available to integrate with the API.
+
 # Usage 
 
 After setting your Postgres database, run:
