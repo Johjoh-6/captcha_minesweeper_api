@@ -63,7 +63,7 @@ func LoadOrCreateSession(cfg SessionConfig) func(http.Handler) http.Handler {
 			// (Even if it matches, writing again is harmless but avoids extra Set-Cookie noise.)
 			if cookieValue == "" || cookieValue != session.SessionID.String() {
 				err = cookies.WriteSigned(w, http.Cookie{ // #nosec G124
-					Name:     cfg.CookieName,
+					Name:     "__Secure-" + cfg.CookieName,
 					Value:    session.SessionID.String(),
 					Path:     "/",
 					HttpOnly: true,
