@@ -35,7 +35,7 @@ func LoadOrCreateSession(cfg SessionConfig) func(http.Handler) http.Handler {
 			}
 
 			// get Cookie, ip and user agent
-			cookieValue, err := cookies.ReadSigned(r, cfg.CookieName, cfg.CookieSigningKey)
+			cookieValue, err := cookies.ReadSigned(r, "__Secure-"+cfg.CookieName, cfg.CookieSigningKey)
 			if err != nil {
 				// no cookie or invalid signature. We'll create/get a DB session.
 				cookieValue = ""
