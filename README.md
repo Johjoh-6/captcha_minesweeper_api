@@ -11,6 +11,7 @@ The SDK is available for the frontend to integrate with the API.
 [SDK](https://github.com/Johjoh-6/captcha-minesweeper-sdk)
 
 If the session captcha is set as `bot`, the API will increase the difficulty level automatically. It will increase the difficulty level by 1 every time the bot makes a request with never a chance of being detected as a human.
+> This is for the future updates
 
 # Usage 
 
