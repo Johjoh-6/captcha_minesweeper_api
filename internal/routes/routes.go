@@ -59,10 +59,8 @@ func NewRouter(app *servers.Application) http.Handler {
 	api.HandleFunc("/status", h.Status).Methods("GET")
 
 	captchaRoute := api.PathPrefix("/captcha").Subrouter()
-	captchaRoute.Use(sessionMiddleware)
-	captchaRoute.Use(botMiddleware)
-	captchaRoute.Use(rateLimitMiddleware)
-	captchaRoute.HandleFunc("/", h.Captcha.GetCaptcha).Methods("GET")
+	captchaRoute.Use(sessionMiddleware, botMiddleware, rateLimitMiddleware)
+	captchaRoute.HandleFunc("", h.Captcha.GetCaptcha).Methods("GET")
 	captchaRoute.HandleFunc("/new", h.Captcha.NewCaptcha).Methods("POST")
 	captchaRoute.HandleFunc("/move", h.Captcha.PlayCaptcha).Methods("POST")
 
