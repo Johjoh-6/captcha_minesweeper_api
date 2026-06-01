@@ -69,7 +69,6 @@ func LoadOrCreateSession(cfg SessionConfig) func(http.Handler) http.Handler {
 					HttpOnly: true,
 					Secure:   true,
 					SameSite: http.SameSiteNoneMode,
-					Domain:   ".run.app", // Allows subdomains
 				}, cfg.CookieSigningKey)
 				if err != nil {
 					cfg.ErrorHelper.ServerError(w, r, err)
