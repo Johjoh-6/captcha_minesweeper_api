@@ -45,8 +45,10 @@ func NewRouter(app *servers.Application) http.Handler {
 	c := cors.New(cors.Options{
 		// Reflect the request Origin so credentialed requests from browsers work.
 		// Consider restricting this to known origins in production.
-		AllowOriginFunc: func(origin string) bool {
-			return origin != ""
+		AllowedOrigins: []string{
+			"https://johjoh-6.github.io", // GitHub Pages
+			"http://localhost:5173",      // Local dev
+			"http://127.0.0.1:5173",
 		},
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "Origin", "X-Requested-With"},
