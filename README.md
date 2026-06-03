@@ -17,7 +17,74 @@ If the session captcha is set as `bot`, the API will increase the difficulty lev
 
 I wanted a home solution for a captcha that could be integrated into any web application. Since most of the traditional captcha use images recognition, I wanted to use a different approach. The idea to use minesweeper as a captcha game come from the popular game Minesweeper (i use to play a lot during my childhood). But I wanted to build a backend API for it, so I could integrate it into any web application. There is also a frontend SDK available to integrate with the API.
 
+# Quick Start
+
+## 1. Install the Captcha Sweeper API
+
+```bash
+# Install the Captcha Sweeper API
+go install github.com/Johjoh-6/captcha_minesweeper_api@latest
+```
+
+## 2. Then Install the Captcha Sweeper SDK
+
+```bash
+# Install the Captcha Sweeper SDK
+git clone https://github.com/Johjoh-6/captcha-minesweeper-sdk
+```
+
+## 3. Environment Variables
+
+> Refer to the `.env.example` file for a list of all available environment variables.
+
+| Variable | Description |
+|----------|-------------|
+| `BASIC_AUTH_USERNAME` | The username for basic authentication. |
+| `BASIC_AUTH_PASSWORD` | The password for basic authentication. |
+| `HTTP_PORT` | The port to listen on. Defaults to `8080`. |
+| `BASE_URL` | The base URL of the API. Defaults to `http://localhost:8080`. |
+| `DB_DSN` | The URL of the Postgres database. |
+| `IDENTIFIER` | The identifier mode to use for the session. Can be `cookie`, `session` or `jwt`. Defaults to `cookie`. |
+| `COOKIE_NAME` | The name of the session cookie. Defaults to `session`. |
+| `COOKIE_SECRET_KEY` | The secret key for the session cookie. |
+| `SESSION_HEADER_NAME` | The name of the session header. Defaults to `X-Session-ID`. |
+| `JWT_SECRET_KEY` | The secret key for JWT authentication. |
+| `JWT_EXPIRY_DURATION` | The expiry duration for JWT authentication. Defaults to `1` (hour). |
+
+
+## 4. Run the Captcha Sweeper API
+
+```bash
+# Run the Captcha Sweeper API
+cd api_captcha_sweeper
+make run
+```
+
+## 5. Test the SDK
+
+```bash
+# Test the SDK
+cd captcha_minesweeper_sdk
+# install the depedancy
+npm i
+# Then run the dev mod
+npm run dev
+```
+
+Normaly rthe
+
+```html
+<captcha-sweeper
+  baseurl="https://your-api-url"
+  difficulty="2"
+  autoinit="true"
+></captcha-sweeper>
+```
+
+
 # Usage 
+
+Check the command with `make`.
 
 After setting your Postgres database, run:
 
@@ -41,6 +108,11 @@ make run
 | GET    | `/captcha` | Returns the current captcha game, if reload is needed |
 | POST   | `/captcha/new` | Creates a new captcha game |
 | POST   | `/captcha/move` | Makes a move in the captcha game |
+
+All `captcha` endpoints require a valid session ID. There is three ways to provide it, depending on the mode set in the environment:
+	- **session**. By default, the session ID is provided in the `X-Session-ID` header. AKA API key.
+	- **cookie**. The session ID is provided in a cookie.
+	- **jwt**. The session ID is provided in a JWT token. It must be sent in the `Authorization` header with the `Bearer` scheme.
 
 ### GET `/status`
 
@@ -414,3 +486,28 @@ You can reload the captcha using the `/captcha` endpoint, which will return the 
 	- Style with go fmt and staticcheck
 
 The CD will be trigger only on `push` to the `main` branch, this will triger the build of the docker image, push to the artifact (GCP), deploy to the service (GCP) and make it available for the web.
+
+## Contributing
+
+### Clone the repo
+
+```bash
+git clone https://github.com/Johjoh-6/captcha_minesweeper_api
+cd captcha_minesweeper_api
+```
+
+### Build the compiled binary
+
+```bash
+make build
+```
+
+### Run the test suite
+
+```bash
+make test
+```
+
+### Submit a pull request
+
+If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
