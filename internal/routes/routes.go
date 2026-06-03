@@ -54,8 +54,12 @@ func NewRouter(app *servers.Application) http.Handler {
 			"http://localhost:5173",      // Local dev
 			"http://127.0.0.1:5173",
 		},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "Origin", "X-Requested-With"},
+		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "Origin", app.Config.SessionHeaderName},
+		ExposedHeaders: []string{
+			"Authorization",
+			app.Config.SessionHeaderName,
+		},
 		AllowCredentials: true,
 	})
 
