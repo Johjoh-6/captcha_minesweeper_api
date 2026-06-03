@@ -50,7 +50,7 @@ func writeSessionCookie(w http.ResponseWriter, cfg SessionConfig, sessionID pgty
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode, // for test http.SameSiteNoneMode
 	}, cfg.CookieSigningKey)
 }
 
