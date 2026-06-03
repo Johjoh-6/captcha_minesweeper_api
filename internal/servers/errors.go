@@ -76,6 +76,12 @@ func (e *Errors) FailedValidation(w http.ResponseWriter, r *http.Request, v vali
 	}
 }
 
+func (e *Errors) Unauthorized(w http.ResponseWriter, r *http.Request, err error, target string) {
+	headers := make(http.Header)
+	headers.Set("WWW-Authenticate", target)
+	e.ErrorMessage(w, r, http.StatusUnauthorized, fmt.Sprintf("%s: %s", target, err.Error()), headers)
+}
+
 func (e *Errors) InvalidAuthenticationToken(w http.ResponseWriter, r *http.Request) {
 	headers := make(http.Header)
 	headers.Set("WWW-Authenticate", "Bearer")

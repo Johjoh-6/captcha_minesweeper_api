@@ -19,10 +19,14 @@ func NewRouter(app *servers.Application) http.Handler {
 
 	// Initialize middleware with dependencies
 	sessionMiddleware := middlewares.LoadOrCreateSession(middlewares.SessionConfig{
-		Queries:          app.Store.Queries,
-		ErrorHelper:      app.Errors,
-		CookieName:       app.Config.Cookie.Name,
-		CookieSigningKey: app.Config.Cookie.SecretKey,
+		Queries:           app.Store.Queries,
+		ErrorHelper:       app.Errors,
+		IdentifierMode:    app.Config.Identifier,
+		CookieName:        app.Config.Cookie.Name,
+		CookieSigningKey:  app.Config.Cookie.SecretKey,
+		JWTSecretKey:      []byte(app.Config.JWT.SecretKey),
+		JWTExpiryDuration: app.Config.JWT.ExpiryDuration,
+		SessionHeaderName: app.Config.SessionHeaderName,
 	})
 	botMiddleware := middlewares.BotDetection(middlewares.BotDetectionConfig{
 		Queries:     app.Store.Queries,
